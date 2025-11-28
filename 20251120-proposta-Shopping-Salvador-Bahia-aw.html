@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proposta Shopping da Bahia - one station media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .nav-link.active {
+            background-color: #6d28d9;
+            color: white;
+            font-weight: 600;
+        }
+        .nav-link {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            background-color: #DC2626;
+            color: white;
+        }
+        #content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .content-section-wrapper {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1F2937;
+        }
+        .brand-safety-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+        }
+        .brand-safety-step i {
+            margin-right: 0.75rem;
+            color: #6d28d9;
+        }
+        #mobileMenuButton {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                padding-top: 5rem;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                z-index: 50;
+                transition: left 0.3s ease-in-out;
+                overflow-y: auto;
+            }
+            #sidebar.open {
+                left: 0;
+            }
+            #mobileMenuButton {
+                display: block;
+            }
+            #content {
+                margin-left: 0 !important;
+            }
+            #sidebarOverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                display: none;
+            }
+            #sidebar.open + #sidebarOverlay {
+                display: block;
+            }
+        }
+        .main-container {
+            display: flex;
+            flex-grow: 1;
+            padding-top: 5rem;
+            padding-bottom: 3.5rem;
+        }
+        .email-summary-item, .pi-summary-item {
+            border-left: 3px solid #6d28d9;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .email-summary-item h4, .pi-summary-item h4 {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.25rem;
+        }
+         .pi-summary-item h5 {
+            font-weight: 500;
+            color: #374151;
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        .email-summary-item p, .pi-summary-item p {
+            font-size: 0.875rem;
+            color: #4B5563;
+            margin-bottom: 0.5rem;
+        }
+        .email-summary-item .date, .pi-summary-item .date {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-bottom: 0.5rem;
+        }
+        .pm-summary-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .pm-summary-card h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #6d28d9;
+            margin-bottom: 1rem; 
+        }
+        .pm-summary-card p {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 0.5rem; 
+        }
+        .pm-summary-card p strong {
+            color: #1F2937;
+        }
+        .is-editable-element {
+            outline: 1px dashed #6d28d9 !important;
+            cursor: text !important;
+            background-color: #f5f3ff !important;
+            padding: 2px;
+        }
+        .is-editable-element:hover {
+            outline: 1px solid #5b21b6 !important;
+        }
+        .edit-controls {
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .notification {
+            position: fixed;
+            bottom: 4rem;
+            right: 1rem;
+            background-color: #10B981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .notification.show {
+            opacity: 1;
+        }
+        .creative-preview-area img, .example-image-container img {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+        }
+        .image-update-controls {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+        }
+        .image-update-controls input[type="text"] {
+             margin-bottom: 0.5rem;
+        }
+        .gemini-interaction-container {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .gemini-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .gemini-response {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-purple-700 text-white shadow-lg fixed w-full z-30 top-0 h-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://onestationmedia.com/wp-content/uploads/2021/02/logo-sem-fundo@300x-768x543.png" alt="one station media logo" class="h-10 mr-4">
+                <span class="text-2xl font-light hidden sm:inline">|</span>
+                <div class="text-xl font-semibold ml-3 hidden sm:inline">
+                    <i class="fas fa-shopping-bag mr-1"></i> Shopping da Bahia
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="text-lg sm:text-xl font-semibold">Proposta - Noelândia 2025</h1>
+                <p class="text-xs sm:text-sm">ID: 20251120</p>
+            </div>
+            <button id="mobileMenuButton" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside id="sidebar" class="w-72 bg-white shadow-md p-4 fixed md:relative md:left-0 md:h-auto md:pt-4">
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="visaoGeral">Visão Geral</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="perfilCampanha">Perfil da Campanha</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="estrategiaDetalhada">Estratégia Detalhada</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="planoMidia">Plano de Mídia</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="gestaoDados">Gestão de Dados (1st Party)</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="brandSafety">Brand Safety</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="formatosAnuncios">Formatos de Anúncios</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="condicoesComerciais">Condições Comerciais</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="contato">Contato</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoEmail">Resumo de E-mail</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoPi">Resumo de PI</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoPmInterno">Resumo PM Interno</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="auditoria">Auditoria da Campanha</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div id="sidebarOverlay"></div>
+
+
+        <main id="content" class="flex-1 p-6 min-w-0 overflow-y-auto">
+        </main>
+    </div>
+
+    <footer class="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-20 h-14">
+        <p class="text-sm">&copy; <span id="currentYear"></span> one station media. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        let isEditing = false;
+        let currentEditingKey = null;
+        let originalContentBeforeEdit = '';
+
+        const GEMINI_API_KEY = ""; // Sua chave API (gerenciada pelo ambiente)
+
+        const sections = {
+            // IA-AGENT-INSTRUCTION: Sempre popule esta seção com uma visão geral de alto nível da campanha.
+            // Informações chave extraídas: Cliente Shopping da Bahia, Objetivo Awareness/Venda, Duração 15/11 a 21/12.
+            visaoGeral: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-binoculars mr-2"></i>Visão Geral da Proposta</h2>
+                    <div id="visaoGeralMainContent">
+                        <p class="text-gray-700 mb-4">
+                            Esta proposta da <strong>one station media</strong> detalha uma campanha de marketing digital para o <strong>Shopping da Bahia</strong>, com foco na divulgação da <strong>Noelândia 2025</strong>, uma experiência natalina imersiva.
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            O objetivo principal é gerar <strong>Awareness</strong> e impulsionar a <strong>venda de ingressos</strong>, utilizando mídia programática omnichannel (Display, Vídeo, YouTube e Push Notification). A estratégia inclui a compilação de Device IDs para retargeting na fase final.
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>URL de Destino da Campanha:</strong> <a href="https://www.ingresso.com/evento/pre-venda-exclusiva-noelandia" target="_blank" class="text-purple-600 hover:underline">https://www.ingresso.com/evento/pre-venda-exclusiva-noelandia</a>
+                        </p>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <h3 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-bullseye mr-2"></i>Foco Principal:</h3>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li>Impulsionar a venda de ingressos para a Noelândia 2025.</li>
+                                <li>Impactar famílias com crianças até 12 anos em Salvador e região.</li>
+                                <li>Compilação de Device IDs (1st Party Data) para retargeting.</li>
+                                <li>Cobertura de diferentes fases do funil (Awareness e Conversão).</li>
+                                <li>Budget líquido de R$ 21.000,00 para o período.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Detalhe o público-alvo, o período da campanha e o orçamento.
+            perfilCampanha: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-users mr-2"></i>Perfil da Campanha</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-user-friends mr-2"></i>Target/Segmentação</h3>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li><strong>Gênero:</strong> Ambos os Sexos</li>
+                                <li><strong>Faixa Etária:</strong> 25-45 anos (Pais e Mães)</li>
+                                <li><strong>Classe:</strong> AB</li>
+                                <li><strong>Geolocalização:</strong> Salvador (BA), com foco em bairros nobres e shoppings.</li>
+                                <li><strong>Interesses:</strong> Programação infantil, Natal, eventos culturais, apps infantis, sites parentais.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-calendar-alt mr-2"></i>Período da Campanha</h3>
+                            <p class="text-gray-600"><strong>15/11 a 21/12</strong></p>
+                            <p class="text-xs text-gray-500">(Início efetivo em 19/11 conforme thread de e-mail)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-dollar-sign mr-2"></i>Budget (Investimento)</h3>
+                            <p class="text-gray-600"><strong>R$ 21.000,00</strong> (Líquido Total)</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-star mr-2"></i>Benefícios Chave</h3>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>Estratégia Omnichannel</li>
+                                <li>Retargeting de Alta Conversão</li>
+                                <li>Segurança de Marca (Brand Safety)</li>
+                                <li>Uso Inteligente de Dados (1st Party)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Detalhe as estratégias utilizadas (Awareness e Retargeting).
+            estrategiaDetalhada: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-lightbulb mr-2"></i>Estratégia Detalhada: Noelândia 2025</h2>
+                     <p class="text-gray-700 mb-4">
+                        A campanha adota uma abordagem em duas fases para maximizar o impacto e a conversão, focando no contexto emocional do Natal e na experiência familiar.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-layer-group mr-2"></i>Fases da Campanha:</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-700"><i class="fas fa-bullhorn mr-1"></i>Fase 1 - Awareness (80% da Verba)</h4>
+                                <p class="text-sm text-gray-600">Foco em impactar famílias com crianças interessadas em lazer e cultura. Utilização de Display, Vídeo, YouTube e Push Notification. Coleta de Device IDs.</p>
+                            </div>
+                            <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                                <h4 class="font-semibold text-purple-700"><i class="fas fa-sync mr-1"></i>Fase 2 - Retargeting (20% da Verba)</h4>
+                                <p class="text-sm text-gray-600">Reimpacto dos usuários identificados na fase anterior. Foco nos 15 dias finais para conversão direta e venda de ingressos, usando Display e Vídeo.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-map-marked-alt mr-2"></i>Geolocalização Prioritária (Salvador):</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li><strong>Shoppings:</strong> Shopping da Bahia, Salvador Shopping, Barra, Bela Vista, Parque Bahia.</li>
+                            <li><strong>Bairros Nobres:</strong> Graça, Vitória, Horto Florestal, Itaigara, Caminho das Árvores, Pituba, Cidade Jardim, Alphaville, Ondina, Costa Azul.</li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-clipboard-list mr-2"></i>KPIs (Indicadores Chave):</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Impressões:</strong> Volume de entrega.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Alcance Único:</strong> Cobertura do público alvo.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Cliques:</strong> Tráfego para compra.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Device IDs:</strong> Base de dados 1st Party.</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Atualizado com base na Tabela de Preço/PM Interno (Total 21k).
+            planoMidia: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-invoice-dollar mr-2"></i>Plano de Mídia e Investimento</h2>
+                    <p class="text-gray-700 mb-4">
+                        O investimento total líquido de <strong>R$ 21.000,00</strong> será distribuído conforme as estratégias detalhadas abaixo.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Estratégia</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Formato</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Meta Estimada</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Budget Líquido</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>Vídeo Programático</strong></td>
+                                    <td class="py-3 px-4">Vídeo (CPV)</td>
+                                    <td class="py-3 px-4">88.946 Views</td>
+                                    <td class="py-3 px-4">R$ 5.000,00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>YouTube</strong></td>
+                                    <td class="py-3 px-4">Vídeo (CPV)</td>
+                                    <td class="py-3 px-4">14.505 Views</td>
+                                    <td class="py-3 px-4">R$ 5.000,00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>Aumento-CTR / Awareness</strong></td>
+                                    <td class="py-3 px-4">Display IAB / Native (CPC)</td>
+                                    <td class="py-3 px-4">2.317 Cliques / 231k Imp</td>
+                                    <td class="py-3 px-4">R$ 4.000,00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>Push Notification</strong></td>
+                                    <td class="py-3 px-4">Push (CPC)</td>
+                                    <td class="py-3 px-4">3.750 Cliques</td>
+                                    <td class="py-3 px-4">R$ 3.000,00</td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>Retargeting</strong></td>
+                                    <td class="py-3 px-4">Display (CPM)</td>
+                                    <td class="py-3 px-4">99.619 Impressões</td>
+                                    <td class="py-3 px-4">R$ 4.000,00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-100 font-semibold">
+                                <tr>
+                                    <td class="py-3 px-4 text-right" colspan="3">Total Geral</td>
+                                    <td class="py-3 px-4">R$ 21.000,00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">
+                        <strong>Observações:</strong> Metas baseadas nas estimativas do Plano de Mídia Interno (Tabelas de Preço). O foco é dividido entre Awareness (Vídeo/YT) e Tráfego/Conversão (Display/Push/Retargeting).
+                    </p>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Mantido texto padrão, com reforço sobre a estratégia de coleta mencionada na proposta.
+            gestaoDados: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-database mr-2"></i>Gestão de Dados (1st Party Data)</h2>
+                    <p class="text-gray-700 mb-4">
+                        A campanha Noelândia inclui a <strong>coleta e estruturação de 1st Party Data</strong> (Device IDs).
+                        Estes dados são coletados das interações dos usuários com a campanha para utilização na Fase 2 (Retargeting) e em outros canais digitais, respeitando a LGPD.
+                    </p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-cogs mr-2"></i>Aplicação Estratégica:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-teal-50 rounded-lg border border-teal-200">
+                            <h4 class="font-semibold text-teal-700"><i class="fas fa-sync mr-1"></i>Retargeting Cruzado</h4>
+                            <p class="text-sm text-gray-600">Reimpactar usuários que viram o vídeo ou clicaram no banner para fechar a compra do ingresso.</p>
+                        </div>
+                        <div class="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                            <h4 class="font-semibold text-sky-700"><i class="fas fa-bullseye mr-1"></i>Enriquecimento de Base</h4>
+                            <p class="text-sm text-gray-600">Criação de públicos para Meta Ads, TikTok e Google Ads.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Seção estática de Brand Safety.
+            brandSafety: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-shield-check mr-2"></i>Brand Safety - Protegendo sua Marca</h2>
+                    <p class="text-gray-700 mb-6">
+                        Garantir que os anúncios do Shopping da Bahia sejam exibidos em ambientes seguros é prioridade.
+                        Implementamos um processo robusto de Brand Safety, especialmente importante para uma campanha voltada ao público familiar e infantil.
+                    </p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Nosso Processo:</h3>
+                    <div class="space-y-3">
+                        <div class="brand-safety-step"><i class="fas fa-search fa-lg"></i> <div><strong>Identificar Conteúdo</strong><br>Classificação de conteúdos sensíveis ou de risco.</div></div>
+                        <div class="brand-safety-step"><i class="fas fa-filter fa-lg"></i> <div><strong>Filtrar Categorias</strong><br>Exclusão de conteúdo adulto, violência, jogos de azar, etc.</div></div>
+                        <div class="brand-safety-step"><i class="fas fa-ban fa-lg"></i> <div><strong>Bloqueio Ativo</strong><br>Bloqueio de inventário não seguro.</div></div>
+                        <div class="brand-safety-step bg-green-100 border border-green-300"><i class="fas fa-flag-checkered fa-lg text-green-600"></i> <div class="text-green-700 font-semibold"><strong>Ambiente Seguro</strong><br>Proteção da reputação da marca Noelândia.</div></div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Atualizado com os formatos mencionados no e-mail (300x250, 320x100, Youtube link, etc).
+            formatosAnuncios: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-palette mr-2"></i>Formatos de Anúncios e Especificações</h2>
+                    <p class="text-gray-700 mb-2">
+                        Utilizaremos um mix de formatos para maximizar a cobertura e o engajamento.
+                    </p>
+                    <p class="text-gray-700 mb-6">
+                        <strong>URL dos Criativos (Drive):</strong> <a href="https://drive.google.com/drive/folders/1lM_tDVMTKQuTy_ux_NSsQ4joTanz4cuQ?usp=drive_link" target="_blank" class="text-purple-600 hover:underline">Acessar Drive com Criativos</a>
+                    </p>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="far fa-image mr-2"></i>Banner Display</h3>
+                        <p class="text-sm text-gray-600 mb-3">Formatos solicitados na troca de e-mails:</p>
+                        <ul class="list-disc list-inside text-gray-700 text-sm">
+                            <li>300x250</li>
+                            <li>320x100</li>
+                            <li>320x480</li>
+                            <li>480x320</li>
+                            <li>336x280</li>
+                        </ul>
+                    </div>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-video mr-2"></i>Vídeo e YouTube</h3>
+                        <p class="text-sm text-gray-600 mb-3">Vídeos para programática e link para YouTube Ads.</p>
+                        <ul class="list-disc list-inside text-gray-700 text-sm">
+                            <li>Vídeo: 640x360 ou 1920x1080 (MP4)</li>
+                            <li>YouTube: <a href="https://youtu.be/dqN24xzjDSY" target="_blank" class="text-blue-600 hover:underline">Link do Vídeo</a></li>
+                        </ul>
+                    </div>
+
+                     <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-bell mr-2"></i>Push Notification</h3>
+                        <ul class="list-disc list-inside text-gray-700 text-sm">
+                            <li>Imagem Principal: 492x328</li>
+                            <li>Ícone: 192x192</li>
+                        </ul>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Termos de pagamento conforme proposta.
+            condicoesComerciais: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-handshake mr-2"></i>Condições Comerciais</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="p-4 bg-gray-50 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-credit-card mr-2"></i>Forma de Pagamento</h3>
+                            <p class="text-gray-600">Pix ou Boleto Bancário.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-calendar-check mr-2"></i>Prazo de Pagamento</h3>
+                            <p class="text-gray-600">15 dias após o término da campanha.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Resumo cronológico da thread de e-mails fornecida.
+            resumoEmail: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i>Resumo da Troca de E-mails</h2>
+                     <p class="text-gray-700 mb-4">
+                        <strong>Link da Thread:</strong> <a href="https://mail.google.com/mail/u/0/#advanced-search/subject=Veicula%C3%A7%C3%A3o+Shopping+Salvador&subset=all&within=1d&sizeoperator=s_sl&sizeunit=s_smb" target="_blank" class="text-purple-600 hover:underline">Acessar Thread de E-mail</a>
+                    </p>
+                    <div id="emailSummaryContent">
+                        <div class="email-summary-item">
+                            <p class="date">13 de Novembro de 2025</p>
+                            <h4>Envio da PI</h4>
+                            <p>Pricilla Thurler envia a PI da campanha Shopping Salvador para a equipe. Lucas Franco agradece e aguarda materiais.</p>
+                        </div>
+
+                        <div class="email-summary-item">
+                            <p class="date">18 de Novembro de 2025 (Manhã)</p>
+                            <h4>Recebimento de Materiais</h4>
+                            <p>Ciro Cerqueira envia o link dos criativos e a URL de destino (ingresso.com). Lucas Franco confere e aponta formatos faltantes (Display e vídeos).</p>
+                        </div>
+
+                        <div class="email-summary-item">
+                            <p class="date">18 de Novembro de 2025 (Tarde)</p>
+                            <h4>Adaptação de Peças</h4>
+                            <p>Ciro envia o Key Visual (KV) para que a One Station media faça o desdobramento das peças faltantes. Lucas confirma e, posteriormente, envia os criativos Display e Push para aprovação, solicitando também os links do YouTube.</p>
+                        </div>
+
+                        <div class="email-summary-item">
+                            <p class="date">18 de Novembro de 2025 (Noite)</p>
+                            <h4>Aprovação Final</h4>
+                            <p>Ciro aprova as peças e envia os links dos vídeos do YouTube.</p>
+                        </div>
+
+                         <div class="email-summary-item">
+                            <p class="date">21 de Novembro de 2025</p>
+                            <h4>Confirmação de Veiculação</h4>
+                            <p>Lucas Franco formaliza que a campanha entrou no ar no dia <strong>19/11</strong> e alinha os prazos de report e relatórios.</p>
+                        </div>
+
+                        <div class="email-summary-item">
+                            <p class="date">25 de Novembro de 2025</p>
+                            <h4>Acesso ao Dashboard</h4>
+                            <p>Davison Weslley envia as credenciais de acesso ao dashboard da campanha para Ciro.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Informações de contato padrão.
+            contato: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i>Entre em Contato</h2>
+                    <p class="text-gray-700 mb-6">
+                        Estamos à disposição para garantir o sucesso da Noelândia 2025.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                            <h3 class="text-lg font-semibold text-purple-700 mb-2"><i class="fas fa-phone-alt mr-2"></i>Telefone:</h3>
+                            <p class="text-gray-700">(11) 94148-6900</p>
+                        </div>
+                        <div class="p-4 bg-purple-50 rounded-lg border border-purple-200">
+                            <h3 class="text-lg font-semibold text-purple-700 mb-2"><i class="fas fa-at mr-2"></i>E-mail:</h3>
+                            <p class="text-gray-700">sales@onestationmedia.com</p>
+                        </div>
+                    </div>
+                     <div class="mt-10 text-center">
+                        <img src="https://onestationmedia.com/wp-content/uploads/2021/02/logo-sem-fundo@300x-768x543.png" alt="Logo One Station Media" class="mx-auto h-12">
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Resumo extraído da PI (contexto do email e proposal).
+            resumoPi: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-invoice mr-2"></i>Resumo do Pedido de Inserção (PI)</h2>
+                    <div class="pi-summary-item">
+                        <h4>PI - Shopping Salvador (Noelândia)</h4>
+                        <p class="date">Enviada em: 13/11/2025</p>
+                        <p><strong>Cliente:</strong> Shopping da Bahia</p>
+                        <p><strong>Campanha:</strong> Noelândia 2025</p>
+                        <p><strong>Período de Veiculação:</strong> Nov/Dez 2025</p>
+                        <p><strong>Custo Total Líquido:</strong> R$ 21.000,00</p>
+                        <h5>Detalhes da Campanha:</h5>
+                        <p><strong>Formatos:</strong> Vídeo, YouTube, Display, Push.</p>
+                        <p><strong>Segmentação:</strong> Pais 25-45, Classe AB, Salvador.</p>
+                        <p><strong>Geolocalização:</strong> Salvador (BA).</p>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Dados extraídos dos PDFs "Tabela de preço".
+            resumoPmInterno: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-alt mr-2"></i>Resumo do Plano de Mídia Interno</h2>
+                    <p class="text-gray-700 mb-6">
+                        Detalhamento técnico baseado nas Tabelas de Preço (ID 20251120).
+                    </p>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="pm-summary-card">
+                            <h4><i class="fas fa-video mr-2"></i>VÍDEO CPM (MediaSmart)</h4>
+                            <p><strong>Bid (CPM):</strong> $0.50</p>
+                            <p><strong>Budget:</strong> R$ 5.000,00</p>
+                            <p><strong>Meta:</strong> 88.946 Views</p>
+                        </div>
+                        <div class="pm-summary-card">
+                            <h4><i class="fab fa-youtube mr-2"></i>YOUTUBE (DV360)</h4>
+                            <p><strong>Bid (CPM):</strong> $0.92</p>
+                            <p><strong>Budget:</strong> R$ 5.000,00</p>
+                            <p><strong>Meta:</strong> 14.505 Views</p>
+                        </div>
+                        <div class="pm-summary-card">
+                            <h4><i class="fas fa-mouse-pointer mr-2"></i>DISPLAY / CTR (Misto)</h4>
+                            <p><strong>Budget:</strong> R$ 4.000,00</p>
+                            <p><strong>Meta:</strong> 2.317 Cliques</p>
+                        </div>
+                        <div class="pm-summary-card">
+                            <h4><i class="fas fa-bell mr-2"></i>PUSH NOTIFICATION</h4>
+                            <p><strong>Budget:</strong> R$ 3.000,00</p>
+                            <p><strong>Meta:</strong> 3.750 Cliques</p>
+                        </div>
+                         <div class="pm-summary-card">
+                            <h4><i class="fas fa-sync mr-2"></i>RETARGETING</h4>
+                            <p><strong>Budget:</strong> R$ 4.000,00</p>
+                            <p><strong>Bid (CPM):</strong> $1.00</p>
+                            <p><strong>Meta:</strong> 99.619 Impressões</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                        <h4 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-calculator mr-2"></i>Total Geral:</h4>
+                        <p><strong>Budget Total:</strong> R$ 21.000,00</p>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Auditoria cruzando Proposta, Email e PM Interno.
+            auditoria: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-clipboard-check mr-2"></i>Auditoria da Campanha</h2>
+                    <p class="text-gray-700 mb-6">
+                        Cruzamento de informações entre Proposta, E-mails e Tabela de Preço.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Item</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Proposta</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Realizado/PM Interno</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700 text-sm">
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Budget Total</td>
+                                    <td class="py-3 px-4">R$ 21.000,00</td>
+                                    <td class="py-3 px-4">R$ 21.000,00</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Data de Início</td>
+                                    <td class="py-3 px-4">15/11</td>
+                                    <td class="py-3 px-4">19/11 (Conforme e-mail)</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800"><i class="fas fa-exclamation-circle mr-1"></i>Atenção (Atraso)</span></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Formatos</td>
+                                    <td class="py-3 px-4">Display, Vídeo, YT, Push</td>
+                                    <td class="py-3 px-4">Display, Vídeo, YT, Push</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        };
+
+        const contentDiv = document.getElementById('content');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function loadContent(contentKey) {
+            if (sections[contentKey]) {
+                contentDiv.style.opacity = 0;
+                setTimeout(() => {
+                    let sectionHtml = `<div class="content-section-wrapper mb-6">${sections[contentKey]}</div>`;
+                    contentDiv.innerHTML = sectionHtml;
+                    contentDiv.style.opacity = 1;
+                }, 250);
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.content === contentKey) {
+                        link.classList.add('active');
+                    }
+                });
+
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.style.display = 'none';
+                }
+            } else {
+                contentDiv.innerHTML = '<p class="text-red-500">Conteúdo não encontrado.</p>';
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const newContentKey = event.target.closest('a').dataset.content;
+                loadContent(newContentKey);
+                event.target.closest('a').blur();
+            });
+        });
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+        });
+
+        loadContent('visaoGeral');
+        document.querySelector('.nav-link[data-content="visaoGeral"]').classList.add('active');
+
+    </script>
+</body>
+</html>
