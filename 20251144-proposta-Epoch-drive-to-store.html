@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campanha Epoch Magia - one station media</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .nav-link.active {
+            background-color: #6d28d9;
+            color: white;
+            font-weight: 600;
+        }
+        .nav-link {
+            transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+        }
+        .nav-link:hover {
+            background-color: #DC2626;
+            color: white;
+        }
+        #content {
+            transition: opacity 0.5s ease-in-out;
+        }
+        .content-section-wrapper {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            border: 1px solid #e5e7eb;
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th {
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #1F2937;
+        }
+        .brand-safety-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #f9fafb;
+        }
+        .brand-safety-step i {
+            margin-right: 0.75rem;
+            color: #6d28d9;
+        }
+        #mobileMenuButton {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            #sidebar {
+                position: fixed;
+                top: 0;
+                padding-top: 5rem;
+                left: -280px;
+                width: 280px;
+                height: 100vh;
+                z-index: 50;
+                transition: left 0.3s ease-in-out;
+                overflow-y: auto;
+            }
+            #sidebar.open {
+                left: 0;
+            }
+            #mobileMenuButton {
+                display: block;
+            }
+            #content {
+                margin-left: 0 !important;
+            }
+            #sidebarOverlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.5);
+                z-index: 40;
+                display: none;
+            }
+            #sidebar.open + #sidebarOverlay {
+                display: block;
+            }
+        }
+        .main-container {
+            display: flex;
+            flex-grow: 1;
+            padding-top: 5rem;
+            padding-bottom: 3.5rem;
+        }
+        .email-summary-item, .pi-summary-item {
+            border-left: 3px solid #6d28d9;
+            padding-left: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .email-summary-item h4, .pi-summary-item h4 {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.25rem;
+        }
+         .pi-summary-item h5 {
+            font-weight: 500;
+            color: #374151;
+            margin-top: 0.75rem;
+            margin-bottom: 0.25rem;
+        }
+        .email-summary-item p, .pi-summary-item p {
+            font-size: 0.875rem;
+            color: #4B5563;
+            margin-bottom: 0.5rem;
+        }
+        .email-summary-item .date, .pi-summary-item .date {
+            font-size: 0.75rem;
+            color: #6B7280;
+            margin-bottom: 0.5rem;
+        }
+        .pm-summary-card {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem; 
+        }
+        .pm-summary-card h4 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #6d28d9;
+            margin-bottom: 1rem; 
+        }
+        .pm-summary-card p {
+            font-size: 0.875rem;
+            color: #374151;
+            margin-bottom: 0.5rem; 
+        }
+        .pm-summary-card p strong {
+            color: #1F2937;
+        }
+        .is-editable-element {
+            outline: 1px dashed #6d28d9 !important;
+            cursor: text !important;
+            background-color: #f5f3ff !important;
+            padding: 2px;
+        }
+        .is-editable-element:hover {
+            outline: 1px solid #5b21b6 !important;
+        }
+        .edit-controls {
+            margin-top: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .notification {
+            position: fixed;
+            bottom: 4rem;
+            right: 1rem;
+            background-color: #10B981;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .notification.show {
+            opacity: 1;
+        }
+        .creative-preview-area img, .example-image-container img {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 0.5rem;
+            margin-right: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.25rem;
+        }
+        .image-update-controls {
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            padding: 0.5rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.25rem;
+        }
+        .image-update-controls input[type="text"] {
+             margin-bottom: 0.5rem;
+        }
+        .gemini-interaction-container {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        .gemini-textarea {
+            width: 100%;
+            min-height: 80px;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+        }
+        .gemini-response {
+            margin-top: 1rem;
+            padding: 1rem;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.375rem;
+            min-height: 50px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <header class="bg-purple-700 text-white shadow-lg fixed w-full z-30 top-0 h-20">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="https://onestationmedia.com/wp-content/uploads/2021/02/logo-sem-fundo@300x-768x543.png" alt="one station media logo" class="h-10 mr-4">
+                <span class="text-2xl font-light hidden sm:inline">|</span>
+                <div class="text-xl font-semibold ml-3 hidden sm:inline">
+                    <i class="fas fa-cube mr-1"></i> Epoch Magia
+                </div>
+            </div>
+            <div class="text-right">
+                <h1 class="text-lg sm:text-xl font-semibold">Campanha Vendas Novembro</h1>
+                <p class="text-xs sm:text-sm">ID: PI-5371 / PROP-20250954</p>
+            </div>
+            <button id="mobileMenuButton" class="md:hidden text-white focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <aside id="sidebar" class="w-72 bg-white shadow-md p-4 fixed md:relative md:left-0 md:h-auto md:pt-4">
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="visaoGeral">Visão Geral</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="perfilCampanha">Perfil da Campanha</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="estrategiaDetalhada">Estratégia Detalhada</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="planoMidia">Plano de Mídia</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="gestaoDados">Gestão de Dados (1st Party)</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="brandSafety">Brand Safety</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="formatosAnuncios">Formatos de Anúncios</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="condicoesComerciais">Condições Comerciais</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="contato">Contato</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoEmail">Resumo de E-mail</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoPi">Resumo de PI</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="resumoPmInterno">Resumo PM Interno</a></li>
+                    <li><a href="#" class="nav-link block py-2.5 px-4 rounded-md mb-1 text-gray-700" data-content="auditoria">Auditoria da Campanha</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div id="sidebarOverlay"></div>
+
+
+        <main id="content" class="flex-1 p-6 min-w-0 overflow-y-auto">
+        </main>
+    </div>
+
+    <footer class="bg-gray-800 text-white text-center p-4 fixed bottom-0 w-full z-20 h-14">
+        <p class="text-sm">&copy; <span id="currentYear"></span> one station media. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        let isEditing = false;
+        let currentEditingKey = null;
+        let originalContentBeforeEdit = '';
+
+        const GEMINI_API_KEY = "YOUR_API_KEY"; // Substitua pela sua chave de API do Gemini
+
+        const sections = {
+            // IA-AGENT-INSTRUCTION: Sempre popule esta seção com uma visão geral de alto nível da campanha.
+            // Informações chave a incluir: Nome do cliente, objetivo principal, resumo do público-alvo, duração da campanha e URL de destino.
+            // Todas as informações devem ser obtidas dos documentos fornecidos (Proposta, PI, E-mails).
+            visaoGeral: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-binoculars mr-2"></i>Visão Geral da Proposta</h2>
+                    <div id="visaoGeralMainContent">
+                        <p class="text-gray-700 mb-4">
+                            Esta campanha para a <strong>Four Hands Publicidade</strong> (cliente <strong>Epoch Magia</strong>), ID Proposta <strong>20250954</strong>, tem como foco estratégico auxiliar nas vendas de brinquedos nas lojas parceiras através de uma ação de <strong>Drive to Store (Geolocalização)</strong> com mensuração via <strong>Footfall</strong>.
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            O objetivo é impactar <strong>Pais e Mães com filhos até 12 anos</strong> (Faixa etária 25-45), de classe social <strong>A e B</strong>, direcionando-os para pontos de venda físicos parceiros.
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>Lojas Parceiras Principais:</strong> Ciatoy (Brasília), Brinkcenter/Toyboy (Rio de Janeiro) e Estripulia (Minas Gerais).
+                        </p>
+                        <p class="text-gray-700 mb-4">
+                            <strong>Documento de Destino (URLs):</strong> <a href="https://docs.google.com/document/d/1Zn3LgeykkhYECsC4Ey-AbhgIe5nT0yx8w6uUCERK8YA/edit?tab=t.0" target="_blank" class="text-purple-600 hover:underline">Acessar Planilha de Links</a>
+                        </p>
+                        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                            <h3 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-bullseye mr-2"></i>Destaques da Campanha:</h3>
+                            <ul class="list-disc list-inside text-gray-700">
+                                <li><strong>Produtos Foco:</strong> Aquabeads, Super Mario Games, Jurassic World Games.</li>
+                                <li><strong>Estratégia:</strong> Geolocalização + Display + Native (Drive To Store).</li>
+                                <li><strong>Volume de Entrega:</strong> 1.000.000 de Impactos.</li>
+                                <li><strong>Período:</strong> 19/11/2025 até 23/12/2025 (Sazonalidade Natal/Vendas).</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Detalhe o público-alvo, o período da campanha e o orçamento.
+            // Garanta que o orçamento mostre os valores Líquido e Bruto, se disponíveis.
+            perfilCampanha: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-users mr-2"></i>Perfil da Campanha</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-user-friends mr-2"></i>Target/Segmentação</h3>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li><strong>Perfil:</strong> Pais e Mães (Homens e Mulheres)</li>
+                                <li><strong>Idade:</strong> 25 a 45 anos</li>
+                                <li><strong>Filhos:</strong> Crianças até 12 anos</li>
+                                <li><strong>Classe Social:</strong> A e B</li>
+                                <li><strong>Contexto:</strong> Compradores de brinquedos, presentes de fim de ano.</li>
+                            </ul>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-calendar-alt mr-2"></i>Período da Campanha</h3>
+                            <p class="text-gray-600"><strong>19 de Novembro de 2025</strong> até <strong>23 de Dezembro de 2025</strong>.</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-dollar-sign mr-2"></i>Budget (Investimento)</h3>
+                            <p class="text-gray-600"><strong>R$ 16.000,00</strong> (Líquido Veículo)</p>
+                            <p class="text-gray-600"><strong>R$ 20.000,00</strong> (Bruto Total)</p>
+                            <p class="text-xs text-gray-500 mt-1">Comissão de Agência: R$ 4.000,00</p>
+                        </div>
+                        <div class="bg-gray-50 p-4 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="fas fa-map-marker-alt mr-2"></i>Praças (Geo)</h3>
+                            <ul class="list-disc list-inside text-gray-600">
+                                <li>Brasília (DF)</li>
+                                <li>Rio de Janeiro (RJ)</li>
+                                <li>Minas Gerais (MG)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Detalhe as estratégias utilizadas (ex: Geofence, Segmentação de Audiência, 1st Party Data).
+            // Liste os KPIs específicos para a campanha.
+            estrategiaDetalhada: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-lightbulb mr-2"></i>Estratégia Detalhada: Drive to Store</h2>
+                     <p class="text-gray-700 mb-4">
+                        A estratégia central é o uso de inteligência de localização (Geolocalização) combinada com mídia Display para cercar o consumidor no momento de decisão de compra e direcioná-lo às lojas parceiras. Será utilizada mídia programática omnichannel com mensuração via Footfall.
+                    </p>
+                    <div class="mb-6">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-map-marked-alt mr-2"></i>Geofence e Segmentação Geográfica:</h3>
+                        <p class="text-sm text-gray-600 mb-3">Geofences de alta precisão com raio de até 3km ao redor de cada unidade parceira.</p>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                                <h4 class="font-semibold text-blue-700"><i class="fas fa-city mr-1"></i>BRASÍLIA (DF) - Ciatoy</h4>
+                                <p class="text-sm text-gray-600">Foco em Asa Sul, Asa Norte e Lago Sul (Áreas urbanas, classe média-alta).</p>
+                            </div>
+                            <div class="p-4 bg-green-50 rounded-lg border border-green-200">
+                                <h4 class="font-semibold text-green-700"><i class="fas fa-umbrella-beach mr-1"></i>RIO DE JANEIRO (RJ) - Brinkcenter/Toyboy</h4>
+                                <p class="text-sm text-gray-600">Foco em Zona Sul, Barra da Tijuca e Recreio (Bairros nobres).</p>
+                            </div>
+                            <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
+                                <h4 class="font-semibold text-orange-700"><i class="fas fa-mountain mr-1"></i>MINAS GERAIS (MG) - Estripulia</h4>
+                                <p class="text-sm text-gray-600">Foco em Belo Horizonte: Savassi, Pampulha e áreas residenciais estratégicas.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-clipboard-list mr-2"></i>KPIs (Indicadores Chave de Desempenho):</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Impressões:</strong> 1.000.000.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">CTR Mínimo:</strong> 1% Garantido.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Cliques:</strong> Meta de 10.000.</div>
+                            <div class="p-3 bg-gray-50 rounded-md shadow-sm"><strong class="text-purple-700">Alcance Único:</strong> Estimado 333.333.</div>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Esta seção DEVE ser atualizada para refletir a divisão de estratégias do plano de mídia interno (PM Interno).
+            // Se não houver PM, usar dados da PI.
+            planoMidia: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-invoice-dollar mr-2"></i>Plano de Mídia e Investimento (Cliente)</h2>
+                    <p class="text-gray-700 mb-4">
+                        O investimento Líquido de <strong>R$ 16.000,00</strong> será alocado para garantir a entrega de 1 milhão de impactos qualificados com garantia de CTR.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Estratégia</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Formatos</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Meta (Impressões)</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Investimento Líquido</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700">
+                                <tr class="border-b">
+                                    <td class="py-3 px-4"><strong>Drive To Store (CPM)</strong></td>
+                                    <td class="py-3 px-4">Banner Display IAB + Native + Rich Media</td>
+                                    <td class="py-3 px-4">1.000.000</td>
+                                    <td class="py-3 px-4">R$ 16.000,00</td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="bg-gray-100 font-semibold">
+                                <tr>
+                                    <td class="py-3 px-4 text-right" colspan="3">Total Geral</td>
+                                    <td class="py-3 px-4">R$ 16.000,00</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 text-right" colspan="3">CPM Líquido</td>
+                                    <td class="py-3 px-4">R$ 16,00</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Esta seção descreve a estratégia de 1st Party Data. Geralmente é estática.
+            gestaoDados: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-database mr-2"></i>Gestão de Dados (1st Party Data)</h2>
+                    <p class="text-gray-700 mb-4">
+                        Nesta campanha de geolocalização, a coleta de dados é fundamental. Identificamos dispositivos que circulam nas áreas de interesse e que interagem com os anúncios.
+                    </p>
+                    <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-cogs mr-2"></i>Aplicação para Epoch Magia:</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-teal-50 rounded-lg border border-teal-200">
+                            <h4 class="font-semibold text-teal-700"><i class="fas fa-mobile-alt mr-1"></i>Device ID Capture</h4>
+                            <p class="text-sm text-gray-600">Captura de IDs de dispositivos móveis de pais e mães nas regiões alvo para retargeting futuro.</p>
+                        </div>
+                        <div class="p-4 bg-sky-50 rounded-lg border border-sky-200">
+                            <h4 class="font-semibold text-sky-700"><i class="fas fa-store mr-1"></i>Footfall (Visita à Loja)</h4>
+                            <p class="text-sm text-gray-600">Mensuração do fluxo de usuários impactados que efetivamente visitaram as lojas físicas parceiras mapeadas.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Esta seção descreve as medidas de Brand Safety.
+            brandSafety: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-shield-check mr-2"></i>Brand Safety</h2>
+                    <p class="text-gray-700 mb-6">
+                        Para uma marca focada no público infantil e familiar como a Epoch Magia, o Brand Safety é inegociável.
+                        Garantimos que os anúncios não apareçam em contextos inadequados.
+                    </p>
+                    <div class="space-y-3">
+                        <div class="brand-safety-step"><i class="fas fa-child fa-lg"></i> <div><strong>Proteção Infantil (COPPA)</strong><br>Rigorosa conformidade com regulamentações de publicidade para produtos infantis, focando o target nos pais (decisores de compra).</div></div>
+                        <div class="brand-safety-step"><i class="fas fa-filter fa-lg"></i> <div><strong>Lista de Bloqueio</strong><br>Exclusão de sites e apps com conteúdo adulto, violento ou controverso.</div></div>
+                        <div class="brand-safety-step bg-green-100 border border-green-300"><i class="fas fa-check-circle fa-lg text-green-600"></i> <div class="text-green-700 font-semibold"><strong>Ambiente Seguro</strong><br>Entrega focada em inventário premium e auditado.</div></div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Esta seção detalha os formatos dos anúncios.
+            formatosAnuncios: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-palette mr-2"></i>Formatos de Anúncios</h2>
+                    <p class="text-gray-700 mb-2">
+                        A campanha utilizará formatos de <strong>Display IAB, Native Ads e Rich Media</strong> otimizados para mobile.
+                    </p>
+                    <p class="text-gray-700 mb-6">
+                        <strong>Link dos Criativos (Drive):</strong> <a href="https://drive.google.com/drive/folders/1Sgcs2ec1RrKTaFEQHE_0T-Ao3LKU8aKD" target="_blank" class="text-purple-600 hover:underline">Acessar Pasta de Criativos</a>
+                    </p>
+
+                    <div class="mb-8">
+                        <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="far fa-image mr-2"></i>Especificações Display</h3>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full bg-white">
+                                <thead class="bg-gray-200">
+                                    <tr>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase">Formato</th>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase">Dimensões Comuns</th>
+                                        <th class="py-2 px-3 text-left text-xs font-semibold text-gray-600 uppercase">Peso Máximo</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-gray-700 text-sm">
+                                    <tr><td>Smartphone (IAB)</td><td>320x50, 300x250, 320x480, 320x100</td><td>150kb</td></tr>
+                                    <tr><td>Tablet/Desktop (IAB)</td><td>728x90, 970x250, 300x600, 336x280</td><td>150kb</td></tr>
+                                    <tr><td>Native Ads</td><td>1200x627, 580x400, 640x480</td><td>150kb</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Atualize os termos de pagamento (Forma de Pagamento, Prazo) com base na PI assinada.
+            condicoesComerciais: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-handshake mr-2"></i>Condições Comerciais</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="p-4 bg-gray-50 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-credit-card mr-2"></i>Forma de Pagamento</h3>
+                            <p class="text-gray-600">Boleto Bancário ou PIX.</p>
+                        </div>
+                        <div class="p-4 bg-gray-50 rounded-lg shadow">
+                            <h3 class="text-lg font-semibold text-gray-700 mb-2"><i class="far fa-calendar-check mr-2"></i>Vencimento</h3>
+                            <p class="text-gray-600"><strong>30/12/2025</strong> (30DFM conforme PI) ou 15 dias após o término.</p>
+                        </div>
+                    </div>
+                    <div>
+                         <h3 class="text-xl font-semibold text-gray-800 mb-3"><i class="fas fa-info-circle mr-2"></i>Faturamento:</h3>
+                         <p class="text-gray-700">Faturar contra <strong>Four Hands Publicidade E Marketing LTDA</strong>.</p>
+                         <p class="text-gray-700">Enviar Nota Fiscal e Boleto para: <strong>contasapagar@fhpublicidade.com.br</strong></p>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Resuma os eventos chave da thread de e-mails cronologicamente.
+            resumoEmail: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-envelope-open-text mr-2"></i>Resumo da Troca de E-mails</h2>
+                     <p class="text-gray-700 mb-4">
+                        <strong>Link da Thread:</strong> <a href="https://mail.google.com/mail/u/0/#advanced-search/subject=CAMPANHA+EPOCH+VENDAS+NOVEMBRO+-+GEOLOCALIZA%C3%87%C3%83O+ONE+STATION&subset=all&within=1d&sizeoperator=s_sl&sizeunit=s_smb" target="_blank" class="text-purple-600 hover:underline">Acessar Thread de E-mail</a>
+                    </p>
+                    <div id="emailSummaryContent">
+                        <div class="email-summary-item">
+                            <p class="date">19 de Novembro de 2025 - 11:10</p>
+                            <h4>Aprovação e Envio de Materiais</h4>
+                            <p>Ágata Moreira (FourHands) informa a aprovação de verba para o cliente <strong>Epoch Magia</strong>. Envia detalhes da campanha: foco em vendas, entrega de 1 milhão de impactos, target Pais/Mães AB. Detalha as praças e links para produtos Aquabeads e Games (Mario/Jurassic World).</p>
+                        </div>
+
+                        <div class="email-summary-item">
+                            <p class="date">19 de Novembro de 2025 - 11:55</p>
+                            <h4>Confirmação de Recebimento</h4>
+                            <p>Lucas Franco (One Station Media) agradece o envio da PI e dos materiais, confirmando que avisará assim que a campanha estiver no ar.</p>
+                        </div>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Resuma as informações chave da Proposta de Inserção (PI) assinada.
+            resumoPi: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-invoice mr-2"></i>Resumo do Pedido de Inserção (PI)</h2>
+                    
+                    <div class="pi-summary-item">
+                        <h4>PI Nº 5371</h4>
+                        <p class="date">Data de Emissão: 19/11/2025</p>
+                        <p><strong>Agência/Cliente:</strong> FOUR HANDS PUBLICIDADE E MARKETING LTDA</p>
+                        <p><strong>CNPJ:</strong> 12.040.615/0001-20</p>
+                        <p><strong>Veículo:</strong> ONE STATION PUBLICIDADE</p>
+                        <p><strong>Campanha:</strong> EPOCH VENDAS NOVEMBRO / PERFORMANCE MAX</p>
+                        <p><strong>Período:</strong> 19/11/2025 a 23/12/2025</p>
+                        <p><strong>Investimento Total (Bruto):</strong> R$ 20.000,00</p>
+                        <p><strong>Investimento Líquido:</strong> R$ 16.000,00</p>
+                        <h5>Detalhes da Entrega:</h5>
+                        <p><strong>Modelo:</strong> CPM (Por Volume)</p>
+                        <p><strong>Volume Contratado:</strong> 1.000.000 Impactos</p>
+                        <p><strong>Praças:</strong> RJ, DF, RS (Conforme produtos).</p>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Esta seção DEVE ser criada mesmo que não haja um documento de plano de mídia interno (PM Interno).
+            resumoPmInterno: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-file-alt mr-2"></i>Resumo do Plano de Mídia Interno (Tabela de Preço)</h2>
+                    <p class="text-gray-700 mb-6">
+                        Detalhes de custos e entregas conforme Tabela de Precificação (ID 20251144).
+                    </p>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="pm-summary-card">
+                            <h4><i class="fas fa-map-marked-alt mr-2"></i>DISPLAY GEO (MediaSmart)</h4>
+                            <p><strong>Estratégia:</strong> Display CPM Geolocalizado</p>
+                            <p><strong>Bid:</strong> $0.35 + $0.06 (Data)</p>
+                            <p><strong>Impressões:</strong> 461.912 (90%)</p>
+                            <p><strong>Total Cost:</strong> $189.38 USD</p>
+                        </div>
+                        <div class="pm-summary-card">
+                            <h4><i class="fas fa-cubes mr-2"></i>RICH MEDIA GEO (MediaSmart)</h4>
+                            <p><strong>Estratégia:</strong> Display Rich Media</p>
+                            <p><strong>Bid:</strong> $0.35 + $0.06 (Data) + Fees</p>
+                            <p><strong>Impressões:</strong> 50.309 (10%)</p>
+                            <p><strong>Total Cost:</strong> $43.27 USD</p>
+                        </div>
+                         <div class="pm-summary-card">
+                            <h4><i class="fas fa-mouse-pointer mr-2"></i>AUMENTO CTR (DV360)</h4>
+                            <p><strong>Estratégia:</strong> CPC Imagem</p>
+                            <p><strong>Bid:</strong> $0.02</p>
+                            <p><strong>Impressões:</strong> 487.830</p>
+                            <p><strong>Cliques Estimados:</strong> ~10.000</p>
+                            <p><strong>Total Cost:</strong> $200.01 USD</p>
+                        </div>
+                    </div>
+                    <div class="mt-6 bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+                        <h4 class="text-lg font-semibold text-indigo-700 mb-2"><i class="fas fa-calculator mr-2"></i>Consolidado da Campanha:</h4>
+                        <p><strong>Budget Líquido (BRL):</strong> R$ 16.000,00</p>
+                        <p><strong>Total Cost (USD):</strong> $432.66</p>
+                        <p><strong>Meta de Impressões Total:</strong> 1.000.051</p>
+                        <p><strong>CPM Médio Venda:</strong> R$ 16,00</p>
+                    </div>
+                </div>
+            `,
+            // IA-AGENT-INSTRUCTION: Auditoria cruzada entre documentos.
+            auditoria: `
+                <div class="content-section card">
+                    <h2 class="card-title"><i class="fas fa-clipboard-check mr-2"></i>Auditoria da Campanha</h2>
+                    <p class="text-gray-700 mb-6">
+                        Cruzamento de dados entre PI Assinada (PI 5371), Proposta (20250954) e PM Interno.
+                    </p>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead class="bg-gray-200">
+                                <tr>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Item de Auditoria</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fonte: PI 5371 / Proposta</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Fonte: PM Interno</th>
+                                    <th class="py-3 px-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-gray-700 text-sm">
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Volume de Entrega (Impressões)</td>
+                                    <td class="py-3 px-4">1.000.000</td>
+                                    <td class="py-3 px-4">1.000.051</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Budget Líquido</td>
+                                    <td class="py-3 px-4">R$ 16.000,00</td>
+                                    <td class="py-3 px-4">R$ 16.000,00</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Plataformas</td>
+                                    <td class="py-3 px-4">One Station (Geral)</td>
+                                    <td class="py-3 px-4">MediaSmart + DV360</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                                 <tr class="border-b">
+                                    <td class="py-3 px-4 font-semibold">Meta de Cliques</td>
+                                    <td class="py-3 px-4">10.000 (Proposta)</td>
+                                    <td class="py-3 px-4">10.001 (DV360)</td>
+                                    <td class="py-3 px-4"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"><i class="fas fa-check-circle mr-1"></i>Consistente</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `
+        };
+
+        const contentDiv = document.getElementById('content');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+        function loadContent(contentKey, forceViewMode = false) {
+            if (sections[contentKey]) {
+                contentDiv.style.opacity = 0;
+                setTimeout(() => {
+                    let sectionHtml = `<div class="content-section-wrapper mb-6">${sections[contentKey]}</div>`;
+                    contentDiv.innerHTML = sectionHtml;
+                    contentDiv.style.opacity = 1;
+
+                }, 250);
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.dataset.content === contentKey) {
+                        link.classList.add('active');
+                    }
+                });
+
+                if (sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    sidebarOverlay.style.display = 'none';
+                }
+            } else {
+                contentDiv.innerHTML = '<p class="text-red-500">Conteúdo não encontrado.</p>';
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (event) => {
+                event.preventDefault();
+                const newContentKey = event.target.closest('a').dataset.content;
+                loadContent(newContentKey);
+                event.target.closest('a').blur();
+            });
+        });
+
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            sidebarOverlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
+        });
+
+        sidebarOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            sidebarOverlay.style.display = 'none';
+        });
+
+        loadContent('visaoGeral');
+        document.querySelector('.nav-link[data-content="visaoGeral"]').classList.add('active');
+
+    </script>
+</body>
+</html>
